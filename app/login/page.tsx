@@ -35,9 +35,9 @@ export default function LoginPage() {
   async function onSubmit(values: LoginValues) {
     setLoading(true);
     setErrorMessage(null);
-    const supabase = createSupabaseBrowserClient();
 
     try {
+      const supabase = createSupabaseBrowserClient();
       const identifier = values.identifier.trim();
       const email = isPhoneIdentifier(identifier) ? buildPhoneAliasEmail(identifier) : identifier.toLowerCase();
 
