@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-background text-white antialiased;
+  font-family: var(--font-body), "Montserrat", var(--font-inter), Inter, sans-serif;
+  font-weight: 600;
+  background-image:
+    radial-gradient(circle at 14% 10%, rgba(0, 227, 120, 0.1), transparent 45%),
+    radial-gradient(circle at 90% 82%, rgba(0, 227, 120, 0.08), transparent 43%);
+}
+
+.font-display {
+  font-family: var(--font-display), "Unbounded", system-ui, sans-serif;
+}
+
+a {
+  @apply text-inherit no-underline;
+}
+
+.page-btn {
+  border-radius: 0.420rem;
+  background-color: #000;
+  color: #fff;
+  border: 1px solid #004100;
+}
+
+.page-btn:hover {
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.scrollbar-visible {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 227, 120, 0.35) rgba(255, 255, 255, 0.04);
+}
+
+.scrollbar-visible::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-visible::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.scrollbar-visible::-webkit-scrollbar-thumb {
+  background: rgba(0, 227, 120, 0.35);
+  border-radius: 999px;
+}
+
+.custom-scrollbar {
+  position: relative;
+  padding-right: 14px;
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.scrollbar-track {
+  position: absolute;
+  top: 8px;
+  right: 4px;
+  bottom: 8px;
+  width: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(0, 227, 120, 0.7);
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 3;
+}
