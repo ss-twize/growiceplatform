@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { Database } from "@/types/database";
+import { readSupabasePublicEnv } from "@/lib/supabase/env";
 
 const protectedRoutes = ["/dashboard", "/analytics", "/marketing", "/billing", "/settings", "/api/n8n"];
 
@@ -10,9 +11,26 @@ export async function middleware(request: NextRequest) {
 
   let response = NextResponse.next({ request });
 
+  const supabaseEnv = readSupabasePublicEnv();
+
+  if (!supabaseEnv) {
+    if (requiresAuth) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json({ error: "Supabase is not configured" }, { status: 503 });
+      }
+
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+
+    return response;
+  }
+
   const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseEnv.url,
+    supabaseEnv.anonKey,
     {
       cookies: {
         get(name: string) {

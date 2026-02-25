@@ -35,9 +35,9 @@ export default function LoginPage() {
   async function onSubmit(values: LoginValues) {
     setLoading(true);
     setErrorMessage(null);
-    const supabase = createSupabaseBrowserClient();
 
     try {
+      const supabase = createSupabaseBrowserClient();
       const identifier = values.identifier.trim();
       const email = isPhoneIdentifier(identifier) ? buildPhoneAliasEmail(identifier) : identifier.toLowerCase();
 
@@ -52,7 +52,8 @@ export default function LoginPage() {
 
       router.push("/dashboard");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Ошибка авторизации");
+      const message = error instanceof Error ? error.message : "Ошибка авторизации";
+      setErrorMessage(message === "Failed to fetch" ? "Не удается подключиться к Supabase. Проверьте NEXT_PUBLIC_SUPABASE_URL и ключи в .env.local." : message);
     } finally {
       setLoading(false);
     }
