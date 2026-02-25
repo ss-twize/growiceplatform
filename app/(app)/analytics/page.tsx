@@ -69,7 +69,36 @@ export default function AnalyticsPage() {
     return { kpiRows, serviceRows, profileCreatedAt, automationRuns };
   }, [supabase, branch, period, from, to]);
 
-  const { data, loading, error } = usePollingQuery(loader, { intervalMs: 20000, enabled: true });
+  const { data, loading, error, refetch } = usePollingQuery(loader, { intervalMs: 20000, enabled: true });
+
+  useEffect(() => {
+    const bookingsChannel = supabase
+      .channel("realtime-bookings-analytics")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "YC_bookings_wtags" },
+        () => {
+          void refetch();
+        }
+      )
+      .subscribe();
+
+    const messagesChannel = supabase
+      .channel("realtime-messages-analytics")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "YC_Messages" },
+        () => {
+          void refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bookingsChannel);
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [supabase, refetch]);
 
   useEffect(() => {
     if (period === "30d") {
@@ -251,7 +280,7 @@ export default function AnalyticsPage() {
   const cancellationsDonutData = [
     { name: "Отмена за день", value: 0, color: "#f59e0b" },
     { name: "Отмена за час", value: 0, color: "#f97316" },
-    { name: "Не пришел", value: totals.no_show_count, color: "#ef4444" },
+    { name: "Не пришел", value: totals.no_show_count, color: "#FF1A1A" },
     { name: "Позвонил и отменил", value: 0, color: "#38bdf8" }
   ];
 

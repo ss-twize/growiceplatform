@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { AlertTriangle, Star, MessageSquare, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,36 @@ export default function DashboardPage() {
     return { dashboard, trendRows, monthRows };
   }, [supabase, branch, period, from, to]);
 
-  const { data, loading, error } = usePollingQuery(loader, { intervalMs: 15000, enabled: true });
+  const { data, loading, error, refetch } = usePollingQuery(loader, { intervalMs: 15000, enabled: true });
+
+  useEffect(() => {
+    const bookingsChannel = supabase
+      .channel("realtime-bookings-dashboard")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "YC_bookings_wtags" },
+        () => {
+          void refetch();
+        }
+      )
+      .subscribe();
+
+    const messagesChannel = supabase
+      .channel("realtime-messages-dashboard")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "YC_Messages" },
+        () => {
+          void refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bookingsChannel);
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [supabase, refetch]);
 
   if (loading) {
     return (

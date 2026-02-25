@@ -15,7 +15,7 @@ const config: Config = {
         border: "rgba(57,255,20,0.25)",
         accent: "#00E378",
         muted: "#9ca3af",
-        danger: "#ff5a72",
+        danger: "#FF1A1A",
         warning: "#f3cd66",
         success: "#66f7bf"
       },
